@@ -1,77 +1,73 @@
-VoterGuard 🇳🇬
+# VoterGuard
 
-AI-Assisted Voter Registration Image Screening & Integrity Support
+**An open prototype that helps authorised reviewers screen voter-registration photos and records for possible irregularities, with humans making every decision.**
 
-VoterGuard is a civic technology project designed to support voter registration image screening, duplicate-image detection and registration integrity through image analysis and automated review assistance.
+> **Prototype notice.** VoterGuard is an independent, experimental project built on **synthetic data**.
+> It is **not** endorsed by, affiliated with, or connected to INEC or any electoral body, and it does **not** access any voter register.
+> It never declares fraud. Every flag is a signal that needs human review.
 
-Our goal is to explore how technology can complement existing electoral processes by helping authorised personnel identify images and records that may require further examination.
+Live demo (frontend): https://voterguard.vercel.app
 
-🎯 The Problem
+## What it does
 
-Electoral registration processes can face challenges involving:
+| Capability | Status |
+|---|---|
+| Image upload and validation (type, size, safe decoding) | Working, automated tests |
+| Image quality checks (OpenCV), SHA-256, perceptual hash, metadata presence | Working, automated tests |
+| Duplicate-photo screening against a reference collection | Working, automated tests |
+| Human review of match candidates (confirmed / not duplicate / needs more info) | Working, automated tests |
+| Audit log and dashboard statistics | Working, automated tests |
+| AI-generated image screening (Smaug-AI-Image-Detector) | **Experimental**, accuracy on registration-style photos not yet measured |
+| Cloud database (Turso) | In progress, not yet verified |
+| Public hosted API | In progress |
+| Authentication and roles, offline desktop app, registration-record rules | Planned |
 
-- Duplicate registration images.
-- Poor-quality or unsuitable photographs.
-- Altered or manipulated images.
-- Inconsistent image metadata.
-- Difficulties identifying records that require additional review.
+## How it works
 
-VoterGuard explores technological approaches to help address these challenges.
+```mermaid
+flowchart LR
+  A[Next.js dashboard<br/>Vercel] -->|HTTPS| B[FastAPI backend]
+  B --> C[(SQLite locally /<br/>Turso in the cloud)]
+  B --> D[OpenCV + hashing<br/>quality, SHA-256, pHash]
+  B -.optional.-> E[AI-image detector<br/>Smaug, runs locally]
+```
 
-🚀 Core Capabilities
+- `app/`, `components/`, `lib/`: the dashboard (Next.js, React, TypeScript)
+- `backend/`: the API, tests and Docker setup. See [`backend/README.md`](backend/README.md) for run instructions and the API list
 
-- Image Analysis: Examines uploaded images and extracts relevant information.
-- SHA-256 Hashing: Identifies exact duplicate image files.
-- Perceptual Hashing: Screens for visually similar images.
-- Image Quality Assessment: Evaluates image sharpness, brightness and contrast.
-- Metadata Inspection: Examines available image metadata.
-- Duplicate Screening: Identifies potential matches for human review.
-- Audit Logging: Records relevant system activities.
+## Run the backend locally
 
-🛠️ Technology Stack
+```bash
+cd backend
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python -m pytest -q
+uvicorn app.main:app --reload --port 8000
+```
 
-Frontend
+## Limits you should know
 
-- TypeScript
-- JavaScript
-- CSS
-- Next.js
+- **Similarity is not identity.** Perceptual hashing finds visually similar images. It is not facial recognition and does not show two photos are the same person.
+- **AI detection is probabilistic.** It can miss new generators and wrongly flag real photos. Its published benchmarks are not results on voter-registration photos.
+- **Local data only.** Matching only covers images loaded into the local reference collection.
+- **Not production-grade.** No authentication yet, and no independent security assessment. Do not use real voter data.
+- **Free hosting limits.** Free tiers sleep when idle and may reset local storage.
 
-Backend
+## Privacy and responsible use
 
-- Python
-- FastAPI
-- OpenCV
-- SQLite
+Use synthetic photos and fictitious records only. Do not upload real voter data, biometrics or identifiable citizen images to this prototype. Any real pilot would first need written authorisation, a lawful purpose, a privacy and security assessment, and human review before any action is taken.
 
-🏗️ Development Status
+## Roadmap
 
-VoterGuard is currently under active development.
+1. Verified cloud persistence and a public demo API
+2. Measured accuracy of the AI detector on licensed sample sets
+3. Role-based access and a fuller review and case workflow
+4. Offline desktop version (Tauri) for low-connectivity settings
 
-The backend MVP has been implemented and tested independently, including image upload, image analysis and hashing functionality.
+## Contact
 
-Frontend-backend integration, additional screening workflows, deployment improvements and further testing remain in progress.
+Project contact: _add a project email here_ (not a personal address).
 
-🔐 Responsible Use
+## License
 
-VoterGuard is designed as a decision-support tool, not an automated fraud-detection authority.
-
-- Similar images do not establish that two records belong to the same person.
-- Image metadata cannot independently establish authenticity.
-- AI-image detection is not definitive.
-- Every potential match or flag requires human review.
-- The prototype is not connected to INEC or any national voter database.
-
-Development and testing should use synthetic data unless appropriate institutional authorisation and data-protection safeguards are in place.
-
-🤝 Collaboration
-
-We welcome conversations with electoral institutions, civic technology organisations, researchers, developers and innovation partners interested in strengthening electoral integrity through responsible technology.
-
-📌 Disclaimer
-
-VoterGuard is an independent civic technology project. It is not an official product of the Independent National Electoral Commission (INEC), and no institutional endorsement is implied.
-
----
-
-Built with the vision of supporting stronger electoral processes through responsible innovation. 🇳🇬
+MIT. See [`LICENSE`](LICENSE). The optional AI model is separately licensed by its authors (Smaug-AI-Image-Detector, Apache-2.0).
