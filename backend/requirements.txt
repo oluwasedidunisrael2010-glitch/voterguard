@@ -1,0 +1,10 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9
+opencv-python-headless>=4.9
+numpy>=1.26
+Pillow>=10.3
+ImageHash>=4.3
+pytest>=8.0
+httpx>=0.27
+turso_serverless
