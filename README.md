@@ -66,7 +66,7 @@ Use synthetic photos and fictitious records only. Do not upload real voter data,
 
 ## Contact
 
-Project contact: _add a project email here_ (not a personal address).
+Project contact: oluwasedidunisrael2010@gmail.com
 
 ## License
 
